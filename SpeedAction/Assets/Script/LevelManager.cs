@@ -15,20 +15,24 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    private int curLevel = 1;
+
     private float upSpeedFigure = 1.0f;
+    public float _upSpeedFigure { get { return upSpeedFigure; } }
     private float upObstructionFigure = 1.0f;
-    private float upLandableSectionFigure = 1.0f;
 
-    void Update()
+    void FixedUpdate()
     {
-        if ((int)(UiManager.instance._runDist % 500) == 0)
+        if (UiManager.instance._runDist >= 300 * curLevel)
         {
-            Player.instance._curSpeed = Player.instance._defalutSpeed * upSpeedFigure;
-
-
             upSpeedFigure += 0.2f;
             upObstructionFigure += 0.1f;
-            upLandableSectionFigure -= 0.1f;
+
+            Player.instance._curSpeed = Player.instance._defalutSpeed * upSpeedFigure;
+            ObstacleManager.instance._probability *= upObstructionFigure;
+            MapManager.instance.UpLevel();
+
+            curLevel++;
         }
     }
 }
