@@ -22,12 +22,7 @@ public class Player : MonoBehaviour
     public State _curState { get { return curState; } set { curState = value; } }
 
     private Kind kind = Kind.DEFAULT;
-    public Kind _kind { get { return kind; } }
-
-    [SerializeField] private AudioClip hittedClip= null;
-    [SerializeField] private AudioClip jumpClip = null;
-    [SerializeField] private AudioClip itemCollectClip = null;
-    [SerializeField] private AudioClip feverClip = null;
+    public Kind _kind { get { return kind; } }      
 
     private Rigidbody rb;
     private AudioSource audioSource;
@@ -76,25 +71,13 @@ public class Player : MonoBehaviour
         if (jumpCount > 1 && Input.GetKeyDown(KeyCode.Space))
         {
             rb.velocity = transform.up * jumpPower;
-            audioSource.volume = 0.5f;
-            audioSource.PlayOneShot(jumpClip);
+            AudioManager.instance.PlayJumpSound();
             jumpCount--;
         }
 
         if (Physics.Raycast(transform.position, Vector3.down, 0.55f))
         {
             jumpCount = 2;
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "Item")
-        {
-            other.gameObject.SetActive(false);
-            audioSource.volume = 0.3f;
-            audioSource.PlayOneShot(itemCollectClip);
-            UiManager.instance.GetItem();
         }
     }
 
@@ -107,11 +90,11 @@ public class Player : MonoBehaviour
     public void GetDamage()
     {
         if (curState == State.FEVER) return;
-
-        audioSource.volume = 1.0f;
-        audioSource.PlayOneShot(hittedClip);
+                
+        AudioManager.instance.PlayHittedSound();
 
         lifeCount--;
+        UiManager.instance.GetDamage(lifeCount);
         if (lifeCount <= 0)
             PlayerDie();
     }
@@ -125,10 +108,11 @@ public class Player : MonoBehaviour
 
     private IEnumerator FeverCouroutine()
     {
-        audioSource.volume = 1.0f;
-        audioSource.PlayOneShot(feverClip);
+        AudioManager.instance.PlayFeverSound();
         curSpeed = defalutSpeed * LevelManager.instance._upSpeedFigure * 1.5f;
 
+        //아이템 획득
+        
         yield return new WaitForSecondsRealtime(feverTime);
 
         curSpeed = defalutSpeed * LevelManager.instance._upSpeedFigure;

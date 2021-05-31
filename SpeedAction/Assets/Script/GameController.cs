@@ -28,6 +28,12 @@ public class GameController : MonoBehaviour
     private int curCharacterKind = 0;
     public int _curCharcterKind { get { return curCharacterKind; } set { curCharacterKind = value; } }
 
+    private float audioBGMVolume = 0.5f;
+    public float _audioBGMVolume { get { return audioBGMVolume; } }
+
+    private float audioEffectVolume = 0.5f;
+    public float _audioEffectVolume { get { return audioEffectVolume; } }
+
     void Awake()
     {
         if (gameController == null)
@@ -52,5 +58,15 @@ public class GameController : MonoBehaviour
         }
 
         scores.Sort(delegate(int a, int b) { if (a < b) return 1; else if (a > b) return -1; return 0; });
+    }
+
+    public void SetBGMVolume(float value)
+    {
+        audioBGMVolume = value;
+    }
+
+    public void SetEffectVolume(float value)
+    {
+        audioEffectVolume = value;
     }
 }

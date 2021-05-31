@@ -36,8 +36,17 @@ public class UiManager : MonoBehaviour
     [SerializeField] private Text feverText = null;
     [SerializeField] private Image feverTextBackground = null;
 
+    [SerializeField] private List<Image> hpImages;
+
     void Start()
     {
+        //Life 이미지 초기화
+        foreach (var hpImage in hpImages)
+            hpImage.gameObject.SetActive(false);
+        //Life 개수 만큼 보여주기
+        for (int lifeCount = 0; lifeCount < Player.instance._lifeCount; lifeCount++)
+            hpImages[lifeCount].gameObject.SetActive(true);
+
         bestScore.text = "0";
         startPos = Player.instance.transform.position.x;
 
@@ -104,5 +113,10 @@ public class UiManager : MonoBehaviour
         feverText.gameObject.SetActive(false);
         feverTextBackground.gameObject.SetActive(false);
         yield return null;
+    }
+
+    public void GetDamage(int life)
+    {
+        hpImages[life].gameObject.SetActive(false);
     }
 }

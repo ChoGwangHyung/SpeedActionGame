@@ -52,8 +52,6 @@ public class MapManager : MonoBehaviour
         int randomLevel = Random.Range(curLevel, maxLevel + 1);
         int blockPattern = Random.Range(0, blockPrefab[randomLevel]._prefabs.Count);
 
-        print(randomLevel + "   " + blockPattern);
-
         GameObject block = Instantiate(blockPrefab[randomLevel]._prefabs[blockPattern], transform);
         block.transform.position = new Vector3(blockCreatePos, -0.5f, 0.0f);
 
