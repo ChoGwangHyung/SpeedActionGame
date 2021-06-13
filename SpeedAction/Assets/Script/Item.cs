@@ -13,10 +13,11 @@ public class Item : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (Player.instance._curState == State.FEVER && Vector3.Distance(gameObject.transform.position, Player.instance.transform.position) <= 5.0f)
+        if (GameController.instance._gameStop) return;
+
+        if (Player.instance._curState == State.FEVER && Vector3.Distance(gameObject.transform.position, Player.instance.transform.position) <= 7.0f)
         {
-            Vector3 dir = (Player.instance.transform.position - gameObject.transform.position).normalized;
-            gameObject.transform.Translate(dir * moveSpeed* Time.fixedDeltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, Player.instance.transform.position + new Vector3(0.0f,0.5f,0.0f), moveSpeed * 1.5f * Time.fixedDeltaTime);
         }
     }
 

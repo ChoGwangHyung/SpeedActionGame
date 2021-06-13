@@ -25,6 +25,9 @@ public class GameController : MonoBehaviour
     private int prevRange;
     public int _prevRange { get { return prevRange; } }
 
+    private int rank;
+    public int _rank { get { return rank; } }
+
     private int curCharacterKind = 0;
     public int _curCharcterKind { get { return curCharacterKind; } set { curCharacterKind = value; } }
 
@@ -33,6 +36,9 @@ public class GameController : MonoBehaviour
 
     private float audioEffectVolume = 0.5f;
     public float _audioEffectVolume { get { return audioEffectVolume; } }
+
+    private bool gameStop = false;
+    public bool _gameStop { get { return gameStop; } }
 
     void Awake()
     {
@@ -52,12 +58,16 @@ public class GameController : MonoBehaviour
         {
             if (scores[index] < score)
             {
+                rank = index + 1;
                 scores[4] = score;
                 break;
             }
         }
 
-        scores.Sort(delegate(int a, int b) { if (a < b) return 1; else if (a > b) return -1; return 0; });
+        //등수에 들지 못하였을 때
+        if (scores[4] != score) rank = 6;
+
+        scores.Sort(delegate (int a, int b) { if (a < b) return 1; else if (a > b) return -1; return 0; });
     }
 
     public void SetBGMVolume(float value)
@@ -68,5 +78,17 @@ public class GameController : MonoBehaviour
     public void SetEffectVolume(float value)
     {
         audioEffectVolume = value;
+    }
+
+    public void GameStart()
+    {
+        gameStop = false;
+        Player.instance.PlayerStart();
+    }
+
+    public void GameStop()
+    {
+        gameStop = true;
+        Player.instance.PlayerStop();
     }
 }

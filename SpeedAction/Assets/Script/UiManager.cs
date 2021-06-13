@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UiManager : MonoBehaviour
 {
@@ -21,6 +22,9 @@ public class UiManager : MonoBehaviour
     private float feverValue = 0.0f;
     public float _feverValue { get { return feverValue; } }
 
+    [SerializeField] private Image feverGageFull;
+    [SerializeField] private Image fevering;
+
     [SerializeField] private Text distance;
     [SerializeField] private Text curScore;
     [SerializeField] private Text bestScore;
@@ -38,6 +42,8 @@ public class UiManager : MonoBehaviour
 
     [SerializeField] private List<Image> hpImages;
 
+    [SerializeField] private GameObject option = null;
+
     void Start()
     {
         //Life 이미지 초기화
@@ -47,7 +53,7 @@ public class UiManager : MonoBehaviour
         for (int lifeCount = 0; lifeCount < Player.instance._lifeCount; lifeCount++)
             hpImages[lifeCount].gameObject.SetActive(true);
 
-        bestScore.text = "0";
+        bestScore.text = "" + GameController.instance._scores[0];
         startPos = Player.instance.transform.position.x;
 
         feverText.gameObject.SetActive(false);
@@ -56,6 +62,13 @@ public class UiManager : MonoBehaviour
 
     void Update()
     {
+        if(Input.GetKeyDown(KeyCode.P))
+        {
+            option.gameObject.SetActive(true);
+            option.GetComponent<Option>().Open();
+            GameController.instance.GameStop();
+        }
+
         feverGage.value = feverValue;
 
         runDist = (Player.instance.transform.position.x - startPos) * 2.0f;
@@ -81,15 +94,21 @@ public class UiManager : MonoBehaviour
             feverValue += (0.01f * 1.5f);
         else
             feverValue += 0.01f;
+
+        if (feverValue >= 1.0f) feverGageFull.gameObject.SetActive(true);
     }
 
     public void FeverEnd()
     {
         feverValue = 0.0f;
+        fevering.gameObject.SetActive(false);
     }
 
     public IEnumerator FeverUiCoroutine()
     {
+        feverGageFull.gameObject.SetActive(false);
+        fevering.gameObject.SetActive(true);
+
         feverText.gameObject.SetActive(true);
         feverTextBackground.gameObject.SetActive(true);
 
@@ -118,5 +137,22 @@ public class UiManager : MonoBehaviour
     public void GetDamage(int life)
     {
         hpImages[life].gameObject.SetActive(false);
+    }
+
+    public void ResumeButton()
+    {
+        option.gameObject.SetActive(false);
+        GameController.instance.GameStart();
+    }
+
+    public void RestartButton()
+    {
+        ResumeButton();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void QuitButton()
+    {
+        Application.Quit();
     }
 }
